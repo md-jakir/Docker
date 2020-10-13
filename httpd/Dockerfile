@@ -9,7 +9,7 @@ RUN yum -y --setopt=tsflags=nodocs update && \
     yum -y --setopt=tsflags=nodocs install httpd && \
     yum clean all
 
-COPY ./index.html /var/www/html
+COPY ./index.html /var/www/html     # place index.html file where Dockerfile has been placed means same location
 
 EXPOSE 80
 
