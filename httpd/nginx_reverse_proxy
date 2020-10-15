@@ -1,0 +1,15 @@
+server  {
+        server_name  masternode01.mydocker.com;
+
+        location / {
+
+                proxy_pass  http://127.0.0.1:8080/;
+
+                }
+
+
+        listen 443 ssl;
+        ssl_certificate /root/ssl/masternode01.mydocker.com.crt;
+        ssl_certificate_key /root/ssl/masternode01.mydocker.com.key;
+
+        }
