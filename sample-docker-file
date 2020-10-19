@@ -1,0 +1,51 @@
+# Choose Repo from Docker Hub
+FROM centos:latest
+
+# Provide details of maintainer
+MAINTAINER ritu
+
+#Install necessary software
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+RUN yum -y install yum-utils
+RUN yum-config-manager --enable remi-php56
+RUN yum -y install php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo php-devel php-pear make gcc systemtap-sdt-devel httpd unzip postfix
+RUN export PHP_DTRACE=yes
+RUN curl -sS https://getcomposer.org/installer | php
+RUN mv -f composer.phar /usr/local/bin/composer
+RUN chmod +x /usr/local/bin/composer
+RUN composer require phpmailer/phpmailer
+COPY phpinfo.php /var/www/html/
+COPY php.ini /var/www/
+COPY httpd.conf /var/www/
+RUN cp -f /var/www/httpd.conf /etc/httpd/conf/
+COPY *.rpm /var/www/
+
+#Install & Configure OCI for PHP
+COPY oci8-2.0.12.tgz /
+RUN tar -xvf oci8-2.0.12.tgz
+RUN yum -y localinstall /var/www/*.rpm --nogpgcheck
+COPY client.sh /etc/profile.d/
+RUN chmod +x /etc/profile.d/client.sh
+RUN cp -f /var/www/php.ini /etc/
+COPY php_oci8_int.h oci8-2.0.12/
+COPY Log_Check.zip /
+RUN unzip Log_Check.zip
+RUN cp -a -R /Log_Check/* /var/www/html/
+WORKDIR /oci8-2.0.12
+RUN phpize
+RUN ./configure --with-oci8=/usr/lib/oracle/12.2/client64 
+RUN cp -f /usr/include/oracle/12.2/client64/*.h /oci8-2.0.12/include/ 
+RUN make 
+RUN make install
+RUN ls /var/www/html/
+RUN rm -rf /var/run/apache2/apache2.pid
+
+#Expose necessary ports
+EXPOSE 80
+EXPOSE 1521
+EXPOSE 25
+
+#Provide Entrypoint
+CMD ["-D", "FOREGROUND"]
+ENTRYPOINT ["/usr/sbin/httpd"]
