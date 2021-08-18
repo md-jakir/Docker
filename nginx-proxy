@@ -1,0 +1,16 @@
+# Installing Docker in EC2 instance
+# Create Ubuntu EC2 from AWS console
+# Create Security Group allowing port 80, 443, 8081, 8082
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get install docker.io -y
+$ sudo usermod -aG docker ${USER} # After that logout the running session and again login
+$ mkdir -p /data/www && cd /data/www
+$ nano index.html
+$ docker run --name nginx -v /data/www:/usr/share/nginx/html:ro -d -p 8081:80 nginx
+$ docker ps && docker container ls
+
+# Then browse with EC2 public DNS name:8081 port
+e.g: http://ec2-13-233-6-183.ap-south-1.compute.amazonaws.com:8081/ 
+# EC2 IP can be pointed to own domain in AWS DNS route 53
