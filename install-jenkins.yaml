@@ -1,0 +1,16 @@
+- name: Installing jenkins in Centos 8
+  hosts: jenkins-host
+  any_errors_fatal: true
+  tasks:
+  - name: Adding jenksins Repo
+    shell: wget -O /etc/yum.repos.d/jenkins.repo \ https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  - name: Import Key
+    shell: rpm --import \ https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+  - name: Update dnf DB
+    shell: dnf update
+  - name: Install jenkins
+    shell: yes | dnf install jenkins
+  - name: Daemon Reload
+    shell: systemctl daemon-reload
+  - name: Start jenkins
+    shell: systemctl start jenkins && systemctl enable jenkins
