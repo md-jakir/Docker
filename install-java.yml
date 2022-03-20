@@ -1,0 +1,9 @@
+- name: Installing java in Centos 8
+  hosts: jenkins-host
+  any_errors_fatal: true
+  tasks:
+  - name: Installing java-11-openjdk
+    dnf:
+      name:
+        - wget
+      state: present
