@@ -1,0 +1,9 @@
+FROM nginx
+
+COPY index.html /usr/nginx/html/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ssl.crt /usr/nginx/
+COPY ssl.key /usr/nginx/
+
+EXPOSE 80:443
+ENTRYPOINT nginx -g 'daemon off;'
